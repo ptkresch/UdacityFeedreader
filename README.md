@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 #Udacity Feedreader Testing Project
 
 ##Introduction
@@ -50,7 +49,3 @@ When ngrok starts, it will display a url of the tunnel. Copy the url provided an
 	* Page content actually changes upon execution of the loadFeed function. Again, this required callbacks due to asynchronous ajax requests.
 
 In addition, tests were ensured to have no dependencies with one another.
-=======
-# FeedreaderTesting
-Udacity testing project - Feedreader application tested through Jasmine
->>>>>>> 883b3d3683422f23707ace15d99bdb1697aae028
