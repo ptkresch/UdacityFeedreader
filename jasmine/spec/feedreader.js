@@ -10,25 +10,25 @@ $(function() {
 
         it('have defined, non-empty urls', function() {
             for (var i = 0; i < allFeeds.length; i++) {
-                (function (feed) {
+                (function(feed) {
                     var url = feed.url;
                     expect(url).toBeDefined();
                     expect(typeof(url)).toEqual("string");
                     expect(url.length).toBeGreaterThan(0);
                 })(allFeeds[i]);
-            };
-        })
+            }
+        });
 
         it('have defined, non-empty names', function() {
             for (var i = 0; i < allFeeds.length; i++) {
-                (function (feed) {
+                (function(feed) {
                     var name = feed.name;
                     expect(name).toBeDefined();
                     expect(typeof(name)).toEqual("string");
                     expect(name.length).toBeGreaterThan(0);
                 })(allFeeds[i]);
-            };
-        })
+            }
+        });
     });
 
     describe('The menu', function() {
@@ -48,13 +48,12 @@ $(function() {
             it('visible when the menu button is clicked once', function() {
                 $menuButton.trigger('click');
                 expect(body.hasClass('menu-hidden')).toEqual(false);
-                describe('but is hidden')
-            })
+            });
 
             it('hidden when the menu button is clicked again', function() {
                 $menuButton.trigger('click');
-                expect(body.hasClass('menu-hidden')).toEqual(true);         
-            })
+                expect(body.hasClass('menu-hidden')).toEqual(true);
+            });
         });
 
         it('moves offscreen', function(done) {
@@ -70,10 +69,10 @@ $(function() {
                     $menuPosition = $('.slide-menu').position().left;
                     expect($menuPosition).toBeLessThan(0);
                     done();
-                }, 1500)
+                }, 1500);
             }, 1500);
         });
-    }); 
+    });
 
     describe('Initial Entries', function() {
         //Asynchronous request requires callback, or the test runs before the ajax request finishes.
@@ -85,8 +84,8 @@ $(function() {
                     return cb();
                 }
             }, 3);
-        }
-        beforeEach(function(done){
+        };
+        beforeEach(function(done) {
             loadFeed.wait(function() {
                 done();
             });
@@ -103,8 +102,8 @@ $(function() {
             expect($feed.length).toBeGreaterThan(0);
             expect($feed.children()[0]).toBe($entry.parent()[0]);
             done();
-        })
-    })
+        });
+    });
 
     describe('New Feed Selection', function() {
         loadFeed.initialComplete = false;
@@ -116,11 +115,11 @@ $(function() {
                     return cb();
                 }
             }, 2);
-        }
-        beforeEach(function(done){
+        };
+        beforeEach(function(done) {
             //There was an error due to jasmine's default timeout - changing the default fixes this.
             window.jasmine.DEFAULT_TIMEOUT_INTERVAL = 30000;
-            loadFeed.wait(function(){
+            loadFeed.wait(function() {
                 done();
             });
             spyOn(loadFeed, 'wait');
@@ -129,18 +128,17 @@ $(function() {
             loadFeed.wait();
             //Ensure loadFeed.wait is called - that way the asynchronous request finishes.
             expect(loadFeed.wait).toHaveBeenCalled();
-            var $feed = $('.feed');
             var $entry = $('.entry');
             expect(loadFeed.initialComplete).toBe(true);
             for (var i = 0; i < allFeeds.length; i++) {
-                (function (entry) {
+                (function(entry) {
                     //Each entry in allFeeds is added to the document.
                     expect(jQuery.contains(document, entry));
                 })($entry[i]);
-            };
+            }
             done();
-        })
-        
-    })
+        });
+
+    });
 
 }());
