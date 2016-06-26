@@ -32,9 +32,9 @@ $(function() {
     });
 
     describe('The menu', function() {
-        var body = $('body');
-        var $menuButton = $('.menu-icon-link');
-        var $menuPosition;
+        var body = $('body'),
+            $menuButton = $('.menu-icon-link'),
+            $menuPosition;
 
         it('is hidden by default', function() {
             var menuPosition = $('.slide-menu').position().left;
@@ -75,68 +75,64 @@ $(function() {
     });
 
     describe('Initial Entries', function() {
-        //Asynchronous request requires callback, or the test runs before the ajax request finishes.
-        loadFeed.initialComplete = false;
-        loadFeed.wait = function(cb) {
-            setTimeout(function() {
-                loadFeed.initialComplete = true;
-                if (cb) {
-                    return cb();
-                }
-            }, 3);
-        };
+        //This entry has the amount of feeds before loadFeed runs,
+        //so it should have a length of 0.
+        var $entry = $('.entry');
+        //Asynchronous request requires the done callback, or the test 
+        //runs before the ajax request finishes.
         beforeEach(function(done) {
-            loadFeed.wait(function() {
-                done();
-            });
+            done();
         });
 
         it('at least one .entry element exists in the .feed container when loadFeed is called', function(done) {
-            loadFeed.wait();
-            var $feed = $('.feed');
-            var $entry = $('.entry');
-            expect(loadFeed.initialComplete).toBe(true);
-            //Loadfeed should ensure that there is at least on entry.
-            expect($entry.length).toBeGreaterThan(0);
-            //Loadfeed should ensure that the entry is added to the feed container.
-            expect($feed.length).toBeGreaterThan(0);
-            expect($feed.children()[0]).toBe($entry.parent()[0]);
-            done();
+            //There shouldn't be anything in the entry container yet.
+            expect($entry.length).toBe(0);
+            loadFeed(1, function() {
+                //Load feed has been called, get the updated entry container.
+                $entry = $('.entry');
+                //After loadFeed is called, we expect the entry container to 
+                //have more than 1 entry.
+                expect($entry.length).toBeGreaterThan(0);
+                done();
+            });
         });
     });
 
     describe('New Feed Selection', function() {
-        loadFeed.initialComplete = false;
-        //Asynchronous request requires callback, or the test runs before the ajax request finishes.
-        loadFeed.wait = function(cb) {
-            setTimeout(function() {
-                loadFeed.initialComplete = true;
-                if (cb) {
-                    return cb();
-                }
-            }, 2);
-        };
+        //This entry has the amount of feeds before loadFeed runs,
+        //so it should have a length of 0.
+        var $entry = $('.entry');
+        //The old entry will be used for comparison between two different loadFeed calls.
+        var $oldentry;
+        //Again, Asynchronous request requires the done callback, or the test 
+        //runs before the ajax request finishes.
         beforeEach(function(done) {
-            //There was an error due to jasmine's default timeout - changing the default fixes this.
-            window.jasmine.DEFAULT_TIMEOUT_INTERVAL = 30000;
-            loadFeed.wait(function() {
-                done();
-            });
-            spyOn(loadFeed, 'wait');
-        });
-        it('content should change when new feed is loaded', function(done) {
-            loadFeed.wait();
-            //Ensure loadFeed.wait is called - that way the asynchronous request finishes.
-            expect(loadFeed.wait).toHaveBeenCalled();
-            var $entry = $('.entry');
-            expect(loadFeed.initialComplete).toBe(true);
-            for (var i = 0; i < allFeeds.length; i++) {
-                (function(entry) {
-                    //Each entry in allFeeds is added to the document.
-                    expect(jQuery.contains(document, entry));
-                })($entry[i]);
-            }
             done();
+        });
+
+        it('content should change when new feed is loaded', function(done) {
+            //There shouldn't be anything in the entry container yet.
+            expect($entry.length).toBe(0);
+            loadFeed(2, function() {
+                //Load feed has been called, get the updated entry container.
+                $entry = $('.entry');
+                //After loadFeed is called, we expect the entry container to 
+                //have more than 1 entry.
+                expect($entry.length).toBeGreaterThan(0);
+                //Get a reference to the this entry container, so we can see if the DOM updates
+                //when loadFeed is called again.
+                $oldentry = $('.entry');
+                //Call loadFeed again in the callback from the first loadFeed call. This way,
+                //it won't run until the first is finished.
+                loadFeed(3, function() {
+                    //Load feed has been called twice now - get the updated entry container.
+                    $entry = $('.entry');
+                    //After loadFeed is called a second time, we expect the entry container to 
+                    //have more than 1 entry.
+                    expect($entry).not.toBe($oldentry);
+                    done();
+                });
+            });
         });
 
     });
